@@ -15,6 +15,7 @@ Use this map to the page to follow our progress.
    * [recognizing emotion with azure](#face)
    * [making responsive graphic visualizations](#viz)
    * [generating sounds with steps](#sounds)
+6. [Seeding collaborations](#collabo)
 
 
 
@@ -68,5 +69,10 @@ Underfoot animations.
 ### Generating sounds with steps
 
 Different sounds for different facial expressions.
+
+<a name="collabo"></a>
+## Seeding collaborations
+
+A musician could augment these efforts in the following ways...
 
 copyright 2019 amonmillner
