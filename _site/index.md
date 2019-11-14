@@ -90,7 +90,7 @@ Our first sprint goal was to integrate different aspects of the Azure Kinect's f
 
 We have developed a system to use the Kinect camera to track the points on a person's leg to determine when a "stomp" is happening or when hands are clapping. While people are (hopefully stepping) in front of the camera, we send full frame images to Cognitive Services face API to receive the likely emotion expressed during the frame.
 
-We elected to use Open Frameworks extensively in the first sprint. This gave us the ability to explore making every stomp that is registered trigger a graphical visualization under the stepper's foot. We also play back different sounds for stomps than we do for claps.
+We elected to use openFrameworks extensively in the first sprint. This gave us the ability to explore making every stomp that is registered trigger a graphical visualization under the stepper's foot. We also play back different sounds for stomps than we do for claps.
 
 We change the background of the scene to red when the Face API informs the program that the stepper is considered to be showing angered face. When happiness is detected, the background is light gold.
 
@@ -98,9 +98,11 @@ We change the background of the scene to red when the Face API informs the progr
 
 #### Sensing steps with cameras
 
-The ver 0.1 code snippet at the bottom of this subsection gives an example of how we went about detecting when a stepper stomps the ground. The approach is reasonable albeit not super robust at the moment. To get the proof of concept working, we needed to expose timestamp information from the Open Frameworks codebase by adding functions to retrieve the private timestamp variable, so that we could determine DP/DT of two samples - only using the Y. We did not use pure distance formula because we were only concerned with a leg going up or down, which the Kinect maps to the Y coordinate. The program considers a stomp to occur When the current velocity is small, but the preceding velocity was large.
+The ver 0.1 code snippet at the bottom of this subsection gives an example of how we went about detecting when a stepper stomps the ground. The approach is reasonable albeit not super robust at the moment. To get the proof of concept working, we needed to expose timestamp information from the openFrameworks codebase by adding functions to retrieve the private timestamp variable, so that we could determine DP/DT of two samples - only using the Y. We did not use pure distance formula because we were only concerned with a leg going up or down, which the Kinect maps to the Y coordinate. The program considers a stomp to occur When the current velocity is small, but the preceding velocity was large.
 
+We had to modify source files from the openFrameworks Kinect add-on to expose the timestamps.
 
+code is from the ofapp.cpp
 
 ```c++
 //TODO: Refactor into MOVE Detection Class
@@ -223,16 +225,29 @@ The background color of the scene changes when Face API returns an emotion. We d
 
 Underfoot animations.
 
+We drew up a design for creating an effect that triggers when a stomp happens and briefly gives particle effect graphical feedback. The program can inform how mild or wild the effects are expressed based on the speed of the stomp or the last read emotion of the stepper.
+
+The initial approach to emitting graphics involves importing an object such as a sphere and use its one coordinate to guide its path. The number of spheres, their appearance, and their paths are works-in-progress. openFrameworks appears to have a myriad of options for importing objects.
 
 
 <a name="sounds"></a>
 #### Generating sounds with steps
 
-Different sounds for different facial expressions.
+openFrameworks features a straightforward method for playing sound. We currently have short mp3 files of sound effects, one specifically to play when a stomp event is registered, a different one for when a clap event is registered. Currently, we are fine tuning appropriate sound effects and acceptable latency so that the sounds seem responsive to their triggers. We see the soundscape as something that change according to emotion as well.
 
 
 <a name="collabo"></a>
 ## Future Directions
+
+Once we have results that we're happy with for one stepper in front of the camera, we will look to sense multiple bodies in the frame. The Cognitive Services Face API returns the bounding box attributes of the face it is classifying an emotion for, which will give us an ability to change a particular stepper's outline or body color instead of the entire scene, for more interactions - can your team take on different personalities or stay in an intense anger face for the entire show (not an easy feat).
+
+We expect to give the microphone array some added functionality through code. We can filter some of the input.
+
+
+We learned that getting Visual Studio running can take time.
+getting environment variables and linkers all working didn't come out of the box. Some steps are not documented. When you open a solution intitially, it defaults to a 32-bit debugger and a 64-bit debugger is needed and the errors do not inform you very well.
+Going through solution property pages to add additional include directories such azure kinect and body tracking libraries. The sentence that reminds users to "make sure that you remember to include such and such dll from this bin and library" without saying how to do that and make sure that you have it.
+The whole of visual studio works well when a solution file can be opened.
 
 ### Seeding collaborations
 
