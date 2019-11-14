@@ -16,7 +16,7 @@
 <!-- End Jekyll SEO tag -->
 
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=9cb444189715719312abb0102d978e336b791e00">
+    <link rel="stylesheet" href="/assets/css/style.css?v=572d5c883111d73f6bd9309a3ef4fd65079913bc">
     <meta name="viewport" content="width=device-width">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -46,11 +46,20 @@
 
 <p>Use this map to the page to follow our progress.</p>
 
+<h3 id="the-inspiration">The Inspiration</h3>
 <ol>
-  <li><a href="#movie">Seeing a Step Show on the screen</a></li>
+  <li><a href="#movie">Seeing a Step Show on stage and on screen</a></li>
   <li><a href="#usc">Stepping on campus</a></li>
-  <li><a href="#nmaah">Experiencing steps + Kinect tech + kids</a></li>
+  <li><a href="#nmaahc">Experiencing steps + Kinect tech + kids</a></li>
+</ol>
+
+<h3 id="the-vision">The Vision</h3>
+<ol>
   <li><a href="#ease">Relating to EASE Lab work</a></li>
+</ol>
+
+<h3 id="the-technical-exploration-sprint">The Technical Exploration Sprint</h3>
+<ol>
   <li><a href="#stepkinect">Adding Azure services to Kinect-enhanced steps</a>
     <ul>
       <li><a href="#stepsense">sensing steps with cameras</a></li>
@@ -61,58 +70,111 @@
   </li>
 </ol>
 
+<h3 id="future-directions">Future Directions</h3>
+<ol>
+  <li><a href="#collabo">Seeding collaborations</a></li>
+</ol>
+
 <p><a name="movie"></a></p>
+<h2 id="the-inspiration-1">The Inspiration</h2>
+<h3 id="seeing-a-step-show-on-stage-and-on-screen">Seeing a Step Show on stage and on screen</h3>
 
-<h2 id="seeing-a-step-show-on-the-screen">Seeing a Step Show on the screen</h2>
+<p>As a middle schooler, Amon was intrigued by a few aspects of college, the computer science major and step shows. He saw college through the lens of a family friend, who invited him to watch her step show. He experience the electric atmosphere of the synchronized sound in person and later enjoyed how step shows were portrayed as a symbol of simultaneous brotherhood/sisterhood and sibling competition at the same time - such as the following clip from the 1980’s “School Daze” film:</p>
 
-<p>This section will show a clip of the School Daze movie step show.</p>
+<iframe width="640" height="480" src="https://www.youtube.com/watch?v=WfPc8Ia7E20"></iframe>
 
 <p><a name="usc"></a></p>
 
-<h2 id="stepping-on-campus">Stepping on campus</h2>
+<h3 id="stepping-on-campus">Stepping on campus</h3>
 
-<p>This section will have imagery of the “yard” that I stepped on at USC.</p>
+<p>As a computer science major in college, Amon also participated in step shows.</p>
 
-<p><a name="nmaah"></a></p>
+<p><img src="/photos/usc1.jpg" alt="" /></p>
+
+<p>Amon is also old, so we have not yet transferred VHS footage of him stepping into digital images so the placeholder above will have to do.</p>
+
+<p><a name="nmaahc"></a></p>
 
 <h2 id="experiencing-steps--kinect-tech--kids">Experiencing Steps + Kinect tech + kids</h2>
 
-<p>This section will show photos of my kids at the museum with the Kinect enabled step system.</p>
+<p>Amon has had a close encounter with an interactive stepping experience that made use of older Kinect sensors. See his kids at the National Museum of African American History and Culture following the lead of on-screen step instructors while they see point cloud-esque likenesses of themselves on the screen alongside the virtual performers.</p>
+
+<p><img src="/photos/nmaahc0.jpg" alt="" /></p>
+
+<iframe src="https://drive.google.com/file/d/197w6iOkJ9QfrqRP9aMSpM0E64h61uHtl/view?usp=sharing" width="640" height="480"></iframe>
+
+<p>Observing how engaging the exhibit was made Amon leave wondering what other types of interactions could be supported with technologies such as Kinects.</p>
+
+<p>Amon was excited to get his hands on the Azure Kinect DK, because he could engage students in his Lab in a very ambitious exploration that connects to his heritage. The art of stepping has a rich past with roots in gumboot dancing, shown in this image from the NMAAHC museum. The art also has great potential to evolve in ways that leverage technological advances. This exploration is an early attempt to experiment in the space of stepping.</p>
 
 <p><a name="ease"></a></p>
 
-<h2 id="relating-to-ease-lab-work">Relating to EASE Lab work</h2>
+<h2 id="the-vision-1">The Vision</h2>
+
+<h3 id="relating-to-ease-lab-work">Relating to EASE Lab work</h3>
 
 <p>I’ll explain here how this work can exhibit cultures that are needing more representation at the forefront of advanced technologies.</p>
 
+<p>Making interests come to life in new ways through computing.
+Our team has experience with culturally-relevant performances and how they intersect with code.</p>
+
+<h3 id="the-vision-in-full">The Vision in full</h3>
+
+<p>People would…
+and they would see code</p>
+
+<p>image of the snake face</p>
+
 <p><a name="stepkinect"></a></p>
 
-<h2 id="adding-azure-to-kinect-enhanced-steps">Adding Azure to Kinect-enhanced steps</h2>
+<h2 id="the-technical-exploration-sprint-1">The Technical Exploration Sprint</h2>
 
-<p>This larger section will feature code snippets and videos of key components of the project.</p>
+<h3 id="adding-azure-to-kinect-enhanced-steps-in-a-sprint">Adding Azure to Kinect-enhanced steps in a sprint</h3>
+
+<p>Our first sprint goal was to integrate different aspects of the Azure Kinect’s features that have not been available before in previous Kinect models through compelling contexts.</p>
+
+<p>The features of the device can be found at the MS Azure Kinect SDK site.</p>
+
+<p>We use the camera to track the points on a person’s leg to determine when a “stomp” is happening or when hands are clapping.</p>
+
+<p>We send full frame images to Cognitive Services face API to receive the likely emotion expressed during the frame.</p>
+
+<p>we made use of Open Frameworks extensively.</p>
+
+<p>Every stomp that is registered triggers a graphical visualization under the particular stepper’s foot.</p>
+
+<p>Every clap sensed triggers a sound.</p>
+
+<p>The background of the scene changes to red when the stepper is considered to be showing angered or intense faces. When happiness is detected, the background is light gold.</p>
 
 <p><a name="stepsense"></a></p>
 
-<h3 id="sensing-steps-with-cameras">Sensing steps with cameras</h3>
+<h4 id="sensing-steps-with-cameras">Sensing steps with cameras</h4>
 
 <p>code and video of detecting steps with the movement delta hack.</p>
 
 <p><a name="face"></a></p>
-<h3 id="recognizing-emotion-with-azure">Recognizing emotion with azure</h3>
+<h4 id="recognizing-emotion-with-azure">Recognizing emotion with azure</h4>
 
 <p>sending faces to the cloud.</p>
 
 <p><a name="viz"></a></p>
-<h3 id="making-responsive-graphic-visualizations">Making responsive graphic visualizations</h3>
+<h4 id="making-responsive-graphic-visualizations">Making responsive graphic visualizations</h4>
 
 <p>Underfoot animations.</p>
 
 <p><a name="sounds"></a></p>
-<h3 id="generating-sounds-with-steps">Generating sounds with steps</h3>
+<h4 id="generating-sounds-with-steps">Generating sounds with steps</h4>
 
 <p>Different sounds for different facial expressions.</p>
 
-<p>copyright 2019 amonmillner</p>
+<p><a name="collabo"></a></p>
+<h2 id="future-directions-1">Future Directions</h2>
+
+<h3 id="seeding-collaborations">Seeding collaborations</h3>
+
+<p>Should this work continue…
+A musician could augment these efforts in the following ways…</p>
 
 
       </section>
