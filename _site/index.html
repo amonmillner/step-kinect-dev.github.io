@@ -81,7 +81,8 @@
 
 <p>As a middle schooler, Amon was intrigued by a few aspects of college, the computer science major and step shows. He saw college through the lens of a family friend, who invited him to watch her step show. He experience the electric atmosphere of the synchronized sound in person and later enjoyed how step shows were portrayed as a symbol of simultaneous brotherhood/sisterhood and sibling competition at the same time - such as the following clip from the 1980’s “School Daze” film:</p>
 
-<iframe width="640" height="480" src="https://www.youtube.com/watch?v=WfPc8Ia7E20"></iframe>
+<iframe width="640" height="480" src="https://www.youtube.com/embed/WfPc8Ia7E20?start=38" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+<p>”&gt;</p>
 
 <p><a name="usc"></a></p>
 
@@ -101,7 +102,7 @@
 
 <p><img src="/photos/nmaahc0.jpg" alt="" /></p>
 
-<iframe src="https://drive.google.com/file/d/197w6iOkJ9QfrqRP9aMSpM0E64h61uHtl/view?usp=sharing" width="640" height="480"></iframe>
+<iframe src="https://drive.google.com/file/d/197w6iOkJ9QfrqRP9aMSpM0E64h61uHtl/preview" width="640" height="480"></iframe>
 
 <p>Observing how engaging the exhibit was made Amon leave wondering what other types of interactions could be supported with technologies such as Kinects.</p>
 
@@ -131,35 +132,137 @@ and they would see code</p>
 
 <h3 id="adding-azure-to-kinect-enhanced-steps-in-a-sprint">Adding Azure to Kinect-enhanced steps in a sprint</h3>
 
-<p>Our first sprint goal was to integrate different aspects of the Azure Kinect’s features that have not been available before in previous Kinect models through compelling contexts.</p>
+<p>Our first sprint goal was to integrate different aspects of the Azure Kinect’s features that have not been available before in previous Kinect models while introducing compelling contexts.</p>
 
-<p>The features of the device can be found at the MS Azure Kinect SDK site.</p>
+<p><a href="">the MS Azure Kinect SDK site</a> shows the full list of the device’s features. Our initial efforts explored only a subset: video sensing and Azure Cognitive Services.</p>
 
-<p>We use the camera to track the points on a person’s leg to determine when a “stomp” is happening or when hands are clapping.</p>
+<p>We have developed a system to use the Kinect camera to track the points on a person’s leg to determine when a “stomp” is happening or when hands are clapping. While people are (hopefully stepping) in front of the camera, we send full frame images to Cognitive Services face API to receive the likely emotion expressed during the frame.</p>
 
-<p>We send full frame images to Cognitive Services face API to receive the likely emotion expressed during the frame.</p>
+<p>We elected to use Open Frameworks extensively in the first sprint. This gave us the ability to explore making every stomp that is registered trigger a graphical visualization under the stepper’s foot. We also play back different sounds for stomps than we do for claps.</p>
 
-<p>we made use of Open Frameworks extensively.</p>
-
-<p>Every stomp that is registered triggers a graphical visualization under the particular stepper’s foot.</p>
-
-<p>Every clap sensed triggers a sound.</p>
-
-<p>The background of the scene changes to red when the stepper is considered to be showing angered or intense faces. When happiness is detected, the background is light gold.</p>
+<p>We change the background of the scene to red when the Face API informs the program that the stepper is considered to be showing angered face. When happiness is detected, the background is light gold.</p>
 
 <p><a name="stepsense"></a></p>
 
 <h4 id="sensing-steps-with-cameras">Sensing steps with cameras</h4>
 
-<p>code and video of detecting steps with the movement delta hack.</p>
+<p>The ver 0.1 code snippet at the bottom of this subsection gives an example of how we went about detecting when a stepper stomps the ground. The approach is reasonable albeit not super robust at the moment. To get the proof of concept working, we needed to expose timestamp information from the Open Frameworks codebase by adding functions to retrieve the private timestamp variable, so that we could determine DP/DT of two samples - only using the Y. We did not use pure distance formula because we were only concerned with a leg going up or down, which the Kinect maps to the Y coordinate. The program considers a stomp to occur When the current velocity is small, but the preceding velocity was large.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//TODO: Refactor into MOVE Detection Class
+</span><span class="kt">double</span> <span class="n">ofApp</span><span class="o">::</span><span class="n">calculateDistance</span><span class="p">(</span><span class="n">k4a_float3_t</span> <span class="n">pos1</span><span class="p">,</span> <span class="n">k4a_float3_t</span> <span class="n">pos2</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">auto</span> <span class="n">xDistance</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">pos2</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">pos1</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+	<span class="k">auto</span> <span class="n">yDistance</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">pos2</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">pos1</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+	<span class="k">auto</span> <span class="n">zDistance</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">pos2</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">pos1</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">z</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+	<span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">xDistance</span> <span class="o">+</span> <span class="n">yDistance</span> <span class="o">+</span> <span class="n">zDistance</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">double</span> <span class="n">ofApp</span><span class="o">::</span><span class="n">calculateYDist</span><span class="p">(</span><span class="n">k4a_float3_t</span> <span class="n">pos1</span><span class="p">,</span> <span class="n">k4a_float3_t</span> <span class="n">pos2</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">double</span> <span class="n">dp</span> <span class="o">=</span> <span class="n">pos2</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">pos1</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+	<span class="k">return</span> <span class="n">abs</span><span class="p">(</span><span class="n">dp</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// TODO: Refactor into Stomp/Clap Detection class
+</span><span class="kt">void</span> <span class="n">ofApp</span><span class="o">::</span><span class="n">saveJointsAndVel</span><span class="p">(</span><span class="k">const</span> <span class="n">k4abt_joint_t</span> <span class="n">joints</span><span class="p">[</span><span class="mi">32</span><span class="p">],</span>
+	<span class="kt">double</span> <span class="n">leftVel</span><span class="p">,</span>
+	<span class="kt">double</span> <span class="n">rightVel</span><span class="p">,</span>
+	<span class="kt">uint64_t</span> <span class="n">timeStamp</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="c1">//STOMP DETECTION
+</span>	<span class="n">m_leftAnkle</span> <span class="o">=</span> <span class="n">joints</span><span class="p">[</span><span class="n">K4ABT_JOINT_ANKLE_LEFT</span><span class="p">].</span><span class="n">position</span><span class="p">;</span>
+	<span class="n">m_rightAnkle</span> <span class="o">=</span> <span class="n">joints</span><span class="p">[</span><span class="n">K4ABT_JOINT_ANKLE_RIGHT</span><span class="p">].</span><span class="n">position</span><span class="p">;</span>
+	<span class="n">m_lastLeftVel</span> <span class="o">=</span> <span class="n">leftVel</span><span class="p">;</span>
+	<span class="n">m_lastRightVel</span> <span class="o">=</span> <span class="n">rightVel</span><span class="p">;</span>
+	<span class="n">m_lastTimeStamp</span> <span class="o">=</span> <span class="n">timeStamp</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//TODO: Refactor into Stomp Detection class
+</span><span class="kt">double</span> <span class="n">ofApp</span><span class="o">::</span><span class="n">calculateVelocity</span><span class="p">(</span><span class="k">const</span> <span class="n">k4abt_joint_t</span> <span class="n">joints</span><span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="kt">int</span> <span class="n">leg</span><span class="p">,</span> <span class="kt">uint64_t</span> <span class="n">timeStamp</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="c1">//KNEE_LEFT 19, ANKLE_LEFT 20, KNEE_RIGHT 23, ANKLE_RIGHT 24
+</span>	<span class="kt">double</span> <span class="n">dp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">leg</span> <span class="o">==</span> <span class="n">LEFT</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">dp</span> <span class="o">=</span> <span class="n">calculateYDist</span><span class="p">(</span><span class="n">joints</span><span class="p">[</span><span class="n">K4ABT_JOINT_ANKLE_LEFT</span><span class="p">].</span><span class="n">position</span><span class="p">,</span> <span class="n">m_leftAnkle</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">leg</span> <span class="o">==</span> <span class="n">RIGHT</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">dp</span> <span class="o">=</span> <span class="n">calculateYDist</span><span class="p">(</span><span class="n">joints</span><span class="p">[</span><span class="n">K4ABT_JOINT_ANKLE_RIGHT</span><span class="p">].</span><span class="n">position</span><span class="p">,</span> <span class="n">m_rightAnkle</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="kt">double</span> <span class="n">dt</span> <span class="o">=</span> <span class="kt">double</span><span class="p">(</span><span class="n">timeStamp</span> <span class="o">-</span> <span class="n">m_lastTimeStamp</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">;</span>
+	<span class="k">return</span> <span class="n">dp</span> <span class="o">/</span> <span class="n">dt</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//TODO: Refactor into Stomp Detection Class
+</span><span class="kt">int</span> <span class="n">ofApp</span><span class="o">::</span><span class="n">didStomp</span><span class="p">(</span><span class="kt">double</span> <span class="n">velocity</span><span class="p">,</span> <span class="kt">double</span> <span class="n">lastVelocity</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">velocity</span> <span class="o">&lt;=</span> <span class="mf">700.0</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">lastVelocity</span> <span class="o">&gt;</span> <span class="mf">1500.0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p><a name="face"></a></p>
 <h4 id="recognizing-emotion-with-azure">Recognizing emotion with azure</h4>
 
-<p>sending faces to the cloud.</p>
+<p>To detect emotions of a person in front of the Kinect. The code below shows
+how we grab an image which came from a Kinect for Azure format. We used the SDK’s function to access the image buffer (a pointer to the RAW image data). We decoded the buffer to convert the raw buffer to a JPEG format using OpenCV.</p>
+
+<p>We used the MS CPP REST SDK that has been around for a while to send image to the Cognitive Services Face API. We sent the binary file input to get back one of the 8 emotions that the Face API classifies (with % of confidence). We had to open the istream with the proper formatting to avoid the Face API failing to return an emotion with no error. We initially did not have the proper format for the anonymous function and got hung there for a while.</p>
 
 <p><a name="viz"></a></p>
 <h4 id="making-responsive-graphic-visualizations">Making responsive graphic visualizations</h4>
+
+<p>The background color of the scene changes when Face API returns an emotion. We did not use all of the classification possible: Anger, contempt, disgust, fear, happiness, neutral, sadness, or surprise.</p>
+
+<p>This code sets the background color.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kt">bool</span> <span class="n">Device</span><span class="o">::</span><span class="n">updateColorInDepthFrame</span><span class="p">(</span><span class="k">const</span> <span class="n">k4a</span><span class="o">::</span><span class="n">image</span><span class="o">&amp;</span> <span class="n">depthImg</span><span class="p">,</span> <span class="k">const</span> <span class="n">k4a</span><span class="o">::</span><span class="n">image</span><span class="o">&amp;</span> <span class="n">colorImg</span><span class="p">)</span>
+ <span class="p">{</span>
+   <span class="k">const</span> <span class="k">auto</span> <span class="n">depthDims</span> <span class="o">=</span> <span class="n">glm</span><span class="o">::</span><span class="n">ivec2</span><span class="p">(</span><span class="n">depthImg</span><span class="p">.</span><span class="n">get_width_pixels</span><span class="p">(),</span> <span class="n">depthImg</span><span class="p">.</span><span class="n">get_height_pixels</span><span class="p">());</span>
+
+   <span class="n">k4a</span><span class="o">::</span><span class="n">image</span> <span class="n">transformedColorImg</span><span class="p">;</span>
+   <span class="k">try</span>
+   <span class="p">{</span>
+     <span class="n">transformedColorImg</span> <span class="o">=</span> <span class="n">k4a</span><span class="o">::</span><span class="n">image</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="n">K4A_IMAGE_FORMAT_COLOR_BGRA32</span><span class="p">,</span>
+       <span class="n">depthDims</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">y</span><span class="p">,</span>
+       <span class="n">depthDims</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">uint8_t</span><span class="p">)));</span>
+
+     <span class="k">this</span><span class="o">-&gt;</span><span class="n">transformation</span><span class="p">.</span><span class="n">color_image_to_depth_camera</span><span class="p">(</span><span class="n">depthImg</span><span class="p">,</span> <span class="n">colorImg</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">transformedColorImg</span><span class="p">);</span>
+   <span class="p">}</span>
+   <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">k4a</span><span class="o">::</span><span class="n">error</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span>
+   <span class="p">{</span>
+     <span class="n">ofLogError</span><span class="p">(</span><span class="n">__FUNCTION__</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">();</span>
+     <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+   <span class="p">}</span>
+
+   <span class="k">const</span> <span class="k">auto</span> <span class="n">transformedColorData</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">transformedColorImg</span><span class="p">.</span><span class="n">get_buffer</span><span class="p">());</span>
+
+   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthPix</span><span class="p">.</span><span class="n">isAllocated</span><span class="p">())</span>
+   <span class="p">{</span>
+     <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthPix</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">depthDims</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">OF_PIXELS_BGRA</span><span class="p">);</span>
+     <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">depthDims</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">GL_RGBA8</span><span class="p">,</span> <span class="n">ofGetUsingArbTex</span><span class="p">(),</span> <span class="n">GL_BGRA</span><span class="p">,</span> <span class="n">GL_UNSIGNED_BYTE</span><span class="p">);</span>
+     <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">setTextureMinMagFilter</span><span class="p">(</span><span class="n">GL_NEAREST</span><span class="p">,</span> <span class="n">GL_NEAREST</span><span class="p">);</span>
+     <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">bind</span><span class="p">();</span>
+     <span class="p">{</span>
+       <span class="n">glTexParameteri</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">texData</span><span class="p">.</span><span class="n">textureTarget</span><span class="p">,</span> <span class="n">GL_TEXTURE_SWIZZLE_R</span><span class="p">,</span> <span class="n">GL_BLUE</span><span class="p">);</span>
+       <span class="n">glTexParameteri</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">texData</span><span class="p">.</span><span class="n">textureTarget</span><span class="p">,</span> <span class="n">GL_TEXTURE_SWIZZLE_B</span><span class="p">,</span> <span class="n">GL_RED</span><span class="p">);</span>
+     <span class="p">}</span>
+     <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">unbind</span><span class="p">();</span>
+   <span class="p">}</span>
+
+   <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthPix</span><span class="p">.</span><span class="n">setFromPixels</span><span class="p">(</span><span class="n">transformedColorData</span><span class="p">,</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+   <span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthTex</span><span class="p">.</span><span class="n">loadData</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">colorInDepthPix</span><span class="p">);</span>
+
+   <span class="n">ofLogVerbose</span><span class="p">(</span><span class="n">__FUNCTION__</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"Color in Depth "</span> <span class="o">&lt;&lt;</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="s">"x"</span> <span class="o">&lt;&lt;</span> <span class="n">depthDims</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;&lt;</span> <span class="s">" stride: "</span> <span class="o">&lt;&lt;</span> <span class="n">transformedColorImg</span><span class="p">.</span><span class="n">get_stride_bytes</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">"."</span><span class="p">;</span>
+
+   <span class="n">transformedColorImg</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span>
+
+   <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+ <span class="p">}</span>
+</code></pre></div></div>
 
 <p>Underfoot animations.</p>
 
