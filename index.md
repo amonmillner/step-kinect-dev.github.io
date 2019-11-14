@@ -66,17 +66,16 @@ Amon was excited to get his hands on the Azure Kinect DK, because he could engag
 
 ### Relating to EASE Lab work
 
-I'll explain here how this work can exhibit cultures that are needing more representation at the forefront of advanced technologies.
+One approach that the EASE Lab has adopted in the effort to extend access to STEM empowerment has been to enhance activities that young people of diverse backgrounds enjoy, and create connections between those passions and STEM (through computing, primarily).
 
-Making interests come to life in new ways through computing.
-Our team has experience with culturally-relevant performances and how they intersect with code.
-
-### The Vision in full
-
-People would...
-and they would see code
-
-image of the snake face
+Accordingly, we imagine that a fully-fleshed out version of this project would involve:
+-people noticing computer-controlled characters doing steps among themselves on the screen.
+-people approach the Kinect and notice that they join the seen.
+-curious participants begin trying out steps of their own, informed by what they see the on-screen characters doing.
+-The on-screen characters have been learning from what kinect steppers around the country have been doing in front of the Step Kinect installations.
+-The characters on screen begin to follow what one or more participants are doing.
+-Participants will feel that stepping is fun and that the new Kinect experience was amazing - and they'll be curious about AI.
+-They realize that they'd like to create experiences like Step Kinect and they go into STEM.
 
 <a name="stepkinect"></a>
 
